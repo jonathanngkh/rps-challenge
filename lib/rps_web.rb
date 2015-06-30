@@ -5,11 +5,11 @@ class Rpsweb < Sinatra::Base
   set :views, proc { File.join(root, '..', 'views') }
   enable :sessions
 
-  get '/' do
+  get '/' do # your controllers are too fat! consider refactoring to helper methods
     @name = params[:name]
     session[:name] = @name
     if $game
-      session[:playername] = "Player 2: #{@name}"
+      session[:playername] = "Player 2: #{@name}" # duplicating with the two session variables 'name', and 'playername'
       @playernum = 2
     else
       session[:playername] = "Player 1: #{@name}"
@@ -19,19 +19,14 @@ class Rpsweb < Sinatra::Base
   end
 
   get '/start' do
-    p session[:playername]
     @playername = session[:playername]
-    if @playername.include?("Player 2:")
-      # do nothing
-    else
-      $game = Game.new(Player)
-    end
+    $game = Game.new(Player) unless @playername.include?("Player 2:") # prefer unless over if !etc
     erb :start
   end
 
   post '/choose' do
     choice = params[:choice]
-    if session[:playername].include?("1:")
+    if session[:playername].include?("1:") # this might allow player 2 to pretend to be player 1 by including this string in their name
       $game.player1.choose(choice)
     else
       $game.player2.choose(choice)
@@ -40,15 +35,14 @@ class Rpsweb < Sinatra::Base
   end
 
   get '/waiting_room' do
-    p $game
-    if $game.player2.choice == nil
-      $game.player2.choice = ['rock', 'paper', 'scissors'].sample
+    unless $game.player2.choice
+      $game.player2.choose(['rock', 'paper', 'scissors'].sample)
     end
     erb :waiting_room
   end
 
   get '/verdict' do
-    p @verdict = $game.decider
+    @verdict = $game.decider
     erb :verdict
   end
 

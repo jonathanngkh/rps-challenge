@@ -4,7 +4,7 @@ class Game
 
   attr_reader :player1, :player2
 
-  def initialize(playerClass)
+  def initialize(playerClass) # nice dependency injection
     @player1 = create_player(playerClass)
     @player2 = create_player(playerClass)
   end
@@ -13,7 +13,7 @@ class Game
     player = playerClass.new
   end
 
-  def decider
+  def decider #  you're abusing the case switch here!!! consider modelling rock, paper, and scissors as objects that know whether they win / lose against each other
     case
     when (self.player1.choice == "rock" and self.player2.choice == "rock")
       "Player 1 chose #{self.player1.choice} while player 2 chose #{self.player2.choice}! It's a tie!"

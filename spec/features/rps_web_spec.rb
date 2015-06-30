@@ -41,6 +41,4 @@ feature 'Rock Paper Scissors' do
     expect(page).to have_content('Player')
   end
 
-
-
 end

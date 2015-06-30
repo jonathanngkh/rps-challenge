@@ -4,7 +4,6 @@ class Player
 
   def initialize
     @choice
-
   end
 
   def choose(rockpaperscissors)
